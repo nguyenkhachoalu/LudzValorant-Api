@@ -10,6 +10,7 @@
         public string PasswordHash { get; set; }
         public DateTime CreatedAt { get; set; }
         public ICollection<UserRole> UserRoles { get; set; }
-        public ICollection<ConfirmEmail> confirmEmails { get; set; }
+        public ICollection<ConfirmEmail> ConfirmEmails { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

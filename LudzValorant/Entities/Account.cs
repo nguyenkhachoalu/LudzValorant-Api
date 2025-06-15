@@ -5,6 +5,8 @@
         public Guid UserId { get; set; }
         public string RiotPuuid { get; set; }
         public string Shard { get; set; }
+        public int Level { get; set; }
+        public string RankName { get; set; }
         public string Region { get; set; }
         public string GameName { get; set; }
         public string TagLine { get; set; }

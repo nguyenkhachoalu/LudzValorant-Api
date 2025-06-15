@@ -280,12 +280,17 @@ namespace LudzValorant.Services.ImplementServices
                 );
                 var ListItemIds = await RiotApiHelper.GetAllOwnedItems(
                 accessToken, entitlementToken, userInfo.RiotPuuid, playerCard.CorrectShard, clientVersion);
+                var levelAndRank = await RiotApiHelper.GetLevelAndRank(
+                    accessToken, entitlementToken, userInfo.RiotPuuid, playerCard.CorrectShard, clientVersion
+                );
 
                 var accountData = new DataResponseGetApiAccount
                 {
                     RiotPuuid = userInfo.RiotPuuid,
                     GameName = userInfo.GameName,
                     PlayerCardImage = playerCard.PlayerCardImage,
+                    Level = levelAndRank.Level,
+                    Rank = levelAndRank.RankName,
                     TagLine = userInfo.TagLine,
                     Shard = playerCard.CorrectShard,
                     Region = userInfo.Region,

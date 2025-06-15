@@ -75,11 +75,6 @@ namespace LudzValorant.Helpers
             return account;
 
         }
-
-
-     
-
-
         public static async Task<DataResponseGetInforInApi> GetAllOwnedItems(
             string accessToken, string entitlementToken, string puuid, string shard, string clientVersion)
         {
@@ -232,6 +227,71 @@ namespace LudzValorant.Helpers
             }
 
             return (string.Empty, "ap"); // fallback nếu không tìm thấy shard nào có data
+        }
+        private static readonly Dictionary<int, string> TierIdToRankName = new()
+{
+    {3, "Iron 1"}, {4, "Iron 2"}, {5, "Iron 3"},
+    {6, "Bronze 1"}, {7, "Bronze 2"}, {8, "Bronze 3"},
+    {9, "Silver 1"}, {10, "Silver 2"}, {11, "Silver 3"},
+    {12, "Gold 1"}, {13, "Gold 2"}, {14, "Gold 3"},
+    {15, "Platinum 1"}, {16, "Platinum 2"}, {17, "Platinum 3"},
+    {18, "Diamond 1"}, {19, "Diamond 2"}, {20, "Diamond 3"},
+    {21, "Ascendant 1"}, {22, "Ascendant 2"}, {23, "Ascendant 3"},
+    {24, "Immortal 1"}, {25, "Immortal 2"}, {26, "Immortal 3"},
+    {27, "Radiant"}
+};
+
+        public static async Task<(int Level, string RankName)> GetLevelAndRank(
+            string accessToken,
+            string entitlementToken,
+            string puuid,
+            string shard,
+            string clientVersion)
+        {
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            client.DefaultRequestHeaders.Add("X-Riot-Entitlements-JWT", entitlementToken);
+            client.DefaultRequestHeaders.Add("X-Riot-ClientVersion", clientVersion);
+            client.DefaultRequestHeaders.Add("X-Riot-ClientPlatform", Convert.ToBase64String(Encoding.UTF8.GetBytes(
+                "{\"platformType\":\"PC\",\"platformOS\":\"Windows\",\"platformOSVersion\":\"10.0.19042.1.256.64bit\",\"platformChipset\":\"Unknown\"}")));
+
+            // Lấy level từ account-xp
+            var levelUrl = $"https://pd.{shard}.a.pvp.net/account-xp/v1/players/{puuid}";
+            var levelResponse = await client.GetAsync(levelUrl);
+            int level = 0;
+            if (levelResponse.IsSuccessStatusCode)
+            {
+                var levelContent = await levelResponse.Content.ReadAsStringAsync();
+                using var levelDoc = JsonDocument.Parse(levelContent);
+                level = levelDoc.RootElement.GetProperty("Progress").GetProperty("Level").GetInt32();
+            }
+
+            // Lấy rank từ mmr
+            var mmrUrl = $"https://pd.{shard}.a.pvp.net/mmr/v1/players/{puuid}";
+            var mmrResponse = await client.GetAsync(mmrUrl);
+            int competitiveTier = 0;
+            if (mmrResponse.IsSuccessStatusCode)
+            {
+                var mmrContent = await mmrResponse.Content.ReadAsStringAsync();
+                using var mmrDoc = JsonDocument.Parse(mmrContent);
+
+                if (mmrDoc.RootElement.TryGetProperty("QueueSkills", out var queueSkills) &&
+                    queueSkills.TryGetProperty("competitive", out var competitive) &&
+                    competitive.TryGetProperty("SeasonalInfoBySeasonID", out var seasonal))
+                {
+                    foreach (var season in seasonal.EnumerateObject())
+                    {
+                        if (season.Value.TryGetProperty("CompetitiveTier", out var tierProp))
+                        {
+                            competitiveTier = tierProp.GetInt32();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            string rankName = TierIdToRankName.TryGetValue(competitiveTier, out var name) ? name : "Unranked";
+            return (level, rankName);
         }
 
     }

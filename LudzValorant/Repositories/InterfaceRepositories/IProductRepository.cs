@@ -6,6 +6,15 @@ namespace LudzValorant.Repositories.InterfaceRepositories
 {
     public interface IProductRepository
     {
-        Task<IPagedList<Product>> GetPagedProductsBySkinNameAsync(Guid? ownerId, string? keyword, ProductSearchType? productSearchType, bool? isPublic, int pageNumber, int pageSize);
+        Task<IPagedList<Product>> GetPagedProductsBySkinNameAsync(
+     Guid? ownerId,
+     string? keyword,
+     ProductSearchType? productSearchType,
+     bool? isPublic,
+     decimal? minPrice,
+     decimal? maxPrice,
+     int pageNumber,
+     int pageSize);
+
     }
 }

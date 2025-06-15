@@ -8,6 +8,8 @@ namespace LudzValorant.Payloads.ResponseModels.DataAccount
         public string RiotPuuid { get; set; }
         public string PlayerCardImage { get; set; }
         public string GameName { get; set; }
+        public int Level { get; set; }
+        public string RankName { get; set; }
         public string TagLine { get; set; }
         public string Shard { get; set; }
         public string Region { get; set; }

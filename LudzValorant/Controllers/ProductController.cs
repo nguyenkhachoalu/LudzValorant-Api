@@ -71,10 +71,10 @@ namespace LudzValorant.Controllers
         /// Lấy danh sách sản phẩm của user theo phân trang và từ khóa
         /// </summary>
         [HttpGet("owner/paged")]
-        public async Task<IActionResult> GetPagedProductsByOwner([FromQuery] string? keyword, [FromQuery] ProductSearchType? productSearchType, bool? isPublic, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetPagedProductsByOwner([FromQuery] ProductFilterRequest request)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirst("Id").Value);
-            var result = await _productService.GetPagedProductsByOwnerId(userId, keyword, productSearchType, isPublic, pageNumber, pageSize);
+            var result = await _productService.GetPagedProductsByOwnerId(userId, request);
             return Ok(result);
         }
 
@@ -83,9 +83,9 @@ namespace LudzValorant.Controllers
         /// </summary>
         [HttpGet("paged")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetPagedProducts([FromQuery] string? keyword, [FromQuery] ProductSearchType? productSearchType, bool? isPublic, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetPagedProducts([FromQuery] ProductFilterRequest request)
         {
-            var result = await _productService.GetPagedProducts(keyword, productSearchType, isPublic, pageNumber, pageSize);
+            var result = await _productService.GetPagedProducts(request);
             return Ok(result);
         }
 
@@ -104,7 +104,7 @@ namespace LudzValorant.Controllers
         /// Chỉnh sửa thông tin sản phẩm
         /// </summary>
         [HttpPut("edit")]
-        public async Task<IActionResult> EditProduct([FromBody] UpdateProductRequest request)
+        public async Task<IActionResult> EditProduct([FromForm] UpdateProductRequest request)
         {
             var userId = Guid.Parse(HttpContext.User.FindFirst("Id").Value);
             var result = await _productService.EditProduct(userId, request);

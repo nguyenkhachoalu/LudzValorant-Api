@@ -17,45 +17,45 @@ namespace LudzValorant.Controllers
             _authService = authService;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] Request_Register request)
         {
             return Ok(await _authService.Register(request));
         }
-        [HttpPost]
+        [HttpPost("confirm")]
         public async Task<IActionResult> ConfirmRegisterAccount(string confirmCode)
         {
             return Ok(await _authService.ConfirmRegisterAccount(confirmCode));
         }
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Request_Login request)
         {
             return Ok(await _authService.Login(request));
         }
 
-        [HttpPut]
+        [HttpPut("change-password")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] // xac thuc bang json web token
         public async Task<IActionResult> ChangePassword([FromBody] Request_ChangePassword request)
         {
             Guid id = Guid.Parse(HttpContext.User.FindFirst("Id").Value);
             return Ok(await _authService.ChangePassword(id, request));
         }
-        [HttpPost]
+        [HttpPost("forgot")]
         public async Task<IActionResult> ForgotPassword(string userName)
         {
             return Ok(await _authService.ForgotPassword(userName));
         }
-        [HttpPost]
+        [HttpPost("refreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody] string token)
         {
             return Ok(await _authService.RefreshTokenAsync(token));
         }
-        [HttpPut]
+        [HttpPut("confirm-forgot")]
         public async Task<IActionResult> ConfirmForgotPassword(string username, string confirmCode)
         {
             return Ok(await _authService.ConfirmForgotPassword(username, confirmCode));
         }
-        [HttpPost]
+        [HttpPost("logout")]
         public async Task<IActionResult> LogoutAsync(string token)
         {
             return Ok(await _authService.LogoutAsync(token));

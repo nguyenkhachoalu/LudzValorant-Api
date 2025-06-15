@@ -15,12 +15,14 @@ namespace LudzValorant.Repositories.ImplementRepositories
             _context = context;
         }
         public async Task<IPagedList<Product>> GetPagedProductsBySkinNameAsync(
-         Guid? ownerId,
-         string? keyword,
-         ProductSearchType? productSearchType,
-         bool? isPublic,
-         int pageNumber,
-         int pageSize)
+     Guid? ownerId,
+     string? keyword,
+     ProductSearchType? productSearchType,
+     bool? isPublic,
+     decimal? minPrice,
+     decimal? maxPrice,
+     int pageNumber,
+     int pageSize)
         {
             var query = _context.Products
                 .Include(p => p.Owner)
@@ -53,10 +55,21 @@ namespace LudzValorant.Repositories.ImplementRepositories
                 query = query.Where(p => p.IsPublic == isPublic.Value);
             }
 
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue && maxPrice.Value > 0)
+            {
+                query = query.Where(p => p.Price <= maxPrice.Value);
+            }
+
             query = query.OrderByDescending(p => p.CreatedAt);
 
             return await PagedList<Product>.CreateAsync(query, pageNumber, pageSize);
         }
+
 
 
 

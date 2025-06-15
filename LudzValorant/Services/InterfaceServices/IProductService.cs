@@ -10,8 +10,8 @@ namespace LudzValorant.Services.InterfaceServices
         Task<ResponseObject<string>> AddProductAsync(Guid userId, ProductRequest request);
         Task<ResponseObject<DataResponseProductWithDetails>> GetProductByIdAsync(Guid productId, bool? filterTier);
         Task<ResponseObject<IEnumerable<DataResponseProduct>>> GetAllProductsByOwnerId(Guid ownerId);
-        Task<ResponsePagedResult<DataResponseProduct>> GetPagedProductsByOwnerId(Guid ownerId, string? keyword, ProductSearchType? productSearchType, bool? isPublic, int pageNumber, int pageSize);
-        Task<ResponsePagedResult<DataResponseProduct>> GetPagedProducts(string? keyword, ProductSearchType? productSearchType, bool? isPublic, int pageNumber, int pageSize);
+        Task<ResponsePagedResult<DataResponseProduct>> GetPagedProductsByOwnerId(Guid ownerId, ProductFilterRequest request);
+        Task<ResponsePagedResult<DataResponseProduct>> GetPagedProducts(ProductFilterRequest request);
         Task<ResponseObject<string>> DeletedProduct(Guid userId, Guid productId);
         Task<ResponseObject<string>> EditProduct(Guid userId, UpdateProductRequest request);
 

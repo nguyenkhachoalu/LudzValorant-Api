@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Upload\Avatar\" />
-    <Folder Include="Upload\Product\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
